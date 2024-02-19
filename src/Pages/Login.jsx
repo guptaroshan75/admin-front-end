@@ -84,24 +84,32 @@ const Login = ({ setCurrentUser }) => {
               <Typography variant="h4" component="h6"> Login </Typography>
 
               <Box my={2} mt={4}>
-                <TextField label="Email-Id" type={'email'} name="email" required
-                  value={userObj.email} fullWidth onChange={handleChange}
-                  variant="outlined" error={!userObj.email} placeholder={'Enter Your Email-Id'}
+                <TextField label="Email-Id" type={'email'}
+                  name="email" required value={userObj.email}
+                  fullWidth onChange={handleChange}
+                  variant="outlined" error={!userObj.email}
+                  placeholder={'Enter Your Email-Id'}
                 />
               </Box>
 
               <Box my={2}>
                 <FormControl variant="outlined" fullWidth required>
-                  <InputLabel type={'password'} name="password" > Password </InputLabel>
-                  <OutlinedInput type={showPassword ? 'text' : 'password'} endAdornment={
-                    <InputAdornment position="end">
-                      <IconButton onClick={handleClickShowPassword} >
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  } label="Password" name="password" value={userObj.password}
-                    onChange={handleChange} error={!userObj.password} 
-                    placeholder={'Enter Your Password'} required
+                  <InputLabel type={'password'} name="password" >
+                    Password
+                  </InputLabel>
+                  <OutlinedInput type={showPassword ? 'text' : 'password'}
+                    endAdornment={
+                      <InputAdornment position="end">
+                        <IconButton onClick={handleClickShowPassword} >
+                          {showPassword ?
+                            <VisibilityOff /> : <Visibility />
+                          }
+                        </IconButton>
+                      </InputAdornment>
+                    } label="Password" name="password"
+                    value={userObj.password} required
+                    onChange={handleChange} error={!userObj.password}
+                    placeholder={'Enter Your Password'}
                   />
                 </FormControl>
               </Box>
@@ -119,9 +127,8 @@ const Login = ({ setCurrentUser }) => {
               <Divider sx={{ my: '18px', bgcolor: 'black' }} />
               <Box my={2}>
                 <Button sx={{
-                  padding: 1, bgcolor: '#f0f0f0', color: 'black', '&:hover': {
-                    backgroundColor: '#646cf5', color: 'white'
-                  }
+                  padding: 1, bgcolor: '#f0f0f0', color: 'black',
+                  '&:hover': { backgroundColor: '#646cf5', color: 'white' }
                 }} startIcon={<FacebookIcon />}
                   variant='contained' fullWidth > Login With Facebook
                 </Button>
@@ -129,9 +136,8 @@ const Login = ({ setCurrentUser }) => {
 
               <Box my={1} mb={'18px'}>
                 <Button sx={{
-                  padding: 1, bgcolor: '#f0f0f0', color: 'black', '&:hover': {
-                    backgroundColor: '#f74554', color: 'white'
-                  }
+                  padding: 1, bgcolor: '#f0f0f0', color: 'black',
+                  '&:hover': { backgroundColor: '#f74554', color: 'white' }
                 }} startIcon={<GoogleIcon />}
                   variant='contained' fullWidth > Login With Google
                 </Button>

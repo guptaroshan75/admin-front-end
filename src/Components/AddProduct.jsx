@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Button, Dialog, Box, Switch } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Button, Dialog, Box } from '@mui/material';
 import { AppBar, Toolbar, IconButton, Typography, Slide } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
@@ -13,7 +13,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 const AddProduct = ({ handleChangeInput, fetchAllProduct,
-    addProduct, setAddProduct, handleFileUpload
+    addProduct, setAddProduct, handleFileUpload, categories
 }) => {
     const [open, setOpen] = useState(false);
 
@@ -21,34 +21,72 @@ const AddProduct = ({ handleChangeInput, fetchAllProduct,
         setOpen(!open);
     };
 
-    const [checked, setChecked] = useState(false);
+    // const [categories, setCategories] = useState([]);
+    const [attribute, setAttribute] = useState([]);
 
-    const handleChange = (event) => {
-        setChecked(event.target.checked);
+    // const fetchAllCategory = async () => {
+    //     try {
+    //         const response = await axios.get(`${API}/getAllCategories`);
+    //         setCategories(response.data.data);
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    // };
+
+    const fetchAllAttribute = async () => {
+        try {
+            const response = await axios.get(`${API}/getAttribute`);
+            setAttribute(response.data.data);
+        } catch (error) {
+            console.log(error);
+        }
     };
 
+    useEffect(() => {
+        fetchAllAttribute();
+        // fetchAllCategory();
+    }, []);
+
     const handleAddToProduct = async (e) => {
+        const formData = new FormData();
+        formData.append('myImage', addProduct.myImage);
+        formData.append('productName', addProduct.productName);
+        formData.append('description', addProduct.description);
+        formData.append('productSKU', addProduct.productSKU);
+        formData.append('productBarcode', addProduct.productBarcode);
+        formData.append('category', addProduct.category);
+        formData.append('attributes', addProduct.attributes);
+        formData.append('attributesValue', addProduct.attributesValue);
+        formData.append('price', addProduct.price);
+        formData.append('salePrice', addProduct.salePrice);
+        formData.append('productQuantity', addProduct.productQuantity);
+        formData.append('productSlug', addProduct.productSlug);
+        formData.append('productTags', addProduct.productTags);
         e.preventDefault();
         try {
-            const response = await axios.post(`${API}/addProducts`, addProduct);
+            const response = await
+                axios.post
+                    (`${API}/addAttributeValue/${addProduct.category}/${addProduct.attributes}`
+                        , formData);
             toast.success("Product Creataed Successfully");
             setAddProduct({
-                myImage: "",
+                myImage: null,
                 productName: '',
                 description: '',
                 productSKU: '',
                 productBarcode: '',
-                productCategory: '',
-                productDefCategory: '',
+                category: '',
+                attributes: '',
+                attributesValue: [],
                 price: '',
                 salePrice: '',
                 productQuantity: '',
                 productSlug: '',
                 productTags: '',
             });
+            console.log(response);
             fetchAllProduct();
             toggeleHandleClick();
-            console.log('Product Added Successfully', response.data);
         } catch (error) {
             console.log(error.message);
         }
@@ -66,7 +104,7 @@ const AddProduct = ({ handleChangeInput, fetchAllProduct,
             <Dialog fullScreen sx={{ ml: 20 }} open={open} onClose={toggeleHandleClick}
                 TransitionComponent={Transition}
             >
-                <AppBar sx={{ position: 'relative', bgcolor: 'rgba(0, 0, 0, 0.04)', py: 2 }}>
+                <AppBar sx={{ position: 'relative', bgcolor: 'rgba(0, 0, 0, 0.04)', py: 2, mb: 3 }}>
                     <Toolbar sx={{ justifyContent: 'space-between' }}>
                         <Box>
                             <Typography sx={{ ml: 2, flex: 1, color: ' black' }} variant="h5" >
@@ -88,27 +126,11 @@ const AddProduct = ({ handleChangeInput, fetchAllProduct,
                         </IconButton>
                     </Toolbar>
                 </AppBar>
-                <Box sx={{
-                    display: "flex", justifyContent: "flex-end", alignItems: "center",
-                    fontSize: "18px", color: "red"
-                }} > Does this product have variants?
-                    <Switch sx={{ fontSize: "60px", }}
-                        checked={checked}
-                        onChange={handleChange}
-                        inputProps={{ 'aria-label': 'controlled' }}
-                    />
-                </Box>
 
-                <Box sx={{ width: '100%', typography: 'body1' }}>
-                    <Box sx={{ mt: 2, mb: 3 }}>
-                        <Typography variant="h4" px={2}
-                            sx={{ borderBottom: 1, borderColor: 'divider' }}
-                        > Basic Details
-                        </Typography>
-                    </Box>
+                <Box sx={{ width: '100%', typography: 'body1', my: 3 }}>
                     <InputField handleChangeInput={handleChangeInput}
-                        handleFileUpload={handleFileUpload}
-                        addProduct={addProduct}
+                        handleFileUpload={handleFileUpload} attribute={attribute}
+                        addProduct={addProduct} categories={categories}
                     />
                 </Box>
 

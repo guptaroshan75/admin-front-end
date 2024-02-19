@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { Box, Divider, FormControlLabel, Pagination, Switch, Typography, Paper } from '@mui/material';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Link } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Box, Divider, FormControlLabel, Pagination, } from '@mui/material';
+import { Table, TableBody, TableHead, TableRow, Link } from '@mui/material';
+import { TableCell, TableContainer, Switch, Typography, Paper } from '@mui/material';
 import ZoomInIcon from '@mui/icons-material/ZoomIn';
 import EditProduct from './EditProduct';
 import DeleteProduct from './DeletProduct';
@@ -9,27 +10,68 @@ import { API } from '../API';
 import { toast } from 'react-toastify';
 import { Link as RouterLink } from 'react-router-dom';
 
-const ProductList = ({ products, fetchAllProduct, searchProducts }) => {
+const ProductList = ({ products, fetchAllProduct, searchProducts, categories }) => {
+    const updateCategory = async (categoryId, category) => {
+        try {
+            await axios.put(`${API}/updateProductWithCat/${categoryId}`, { category: category });
+            fetchAllProduct()
+            // toast.success("Product Visibility In DataBase");
+        } catch (error) {
+            console.error(error.message);
+        }
+    };
+
+    // const ShowUpdate = (categoryId) => {
+    //     const updatedProducts = products.map((product) => {
+    //         const updatedProductCat = categories.map(category => {
+    //             if (category._id === product.categoryId) {
+    //                 const updatedProduct = {
+    //                     ...product,
+    //                     category: product.category,
+    //                 };
+    //                 updateCategory( updatedProduct.category);
+    //                 return updatedProduct;
+    //             }
+    //             return category;
+    //         })
+    //         fetchAllProduct(updateCategory);
+    //         return updatedProductCat;
+    //     });
+    //     fetchAllProduct(updateCategory);
+    //     return updatedProducts;
+    // }
+    // const updatedProducts = ShowUpdate();
+
+    const ShowUpdate = (categoryId) => {
+        const updatedProducts = products.map((product) => {
+            const categoryMatch =
+                categories.find((category) => category._id === product.categoryId);
+            if (categoryMatch) {
+                return {
+                    ...product,
+                    category: categoryMatch.catName,
+                };
+            }
+            updateCategory(categoryId, categoryMatch);
+            return product;
+        });
+        return updatedProducts;
+    }
+    const updatedProducts = ShowUpdate();
+
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 5;
 
     const startIndex = (currentPage - 1) * itemsPerPage;
-    const visibleProducts = products.slice(startIndex, startIndex + itemsPerPage);
-
-    const handlePageChange = (event, newPage) => {
-        setCurrentPage(newPage);
-    };
+    const visibleProducts = updatedProducts.slice(startIndex, startIndex + itemsPerPage);
 
     const handleBadgeVisibility = async (productId) => {
         const updatedProducts = products.map(product => {
             if (product._id === productId) {
-                console.log('inside', product.published);
                 const updatedProduct = {
                     ...product,
                     published: product.published,
                 };
-                console.log('Updating visibility:', updatedProduct.published);
-                console.log('Updated Product:', updatedProduct);
                 updateVisibility(productId, updatedProduct.published);
                 return updatedProduct;
             }
@@ -39,13 +81,15 @@ const ProductList = ({ products, fetchAllProduct, searchProducts }) => {
         return updatedProducts;
     };
 
+    const handlePageChange = (event, newPage) => {
+        setCurrentPage(newPage);
+    };
+
     const updateVisibility = async (productId, checked) => {
         try {
-            const response = await
-                axios.put(`${API}/updateProductVisble/${productId}`, { published: checked });
+            await axios.put(`${API}/updateProductVisble/${productId}`, { published: checked });
             fetchAllProduct()
             toast.success("Product Visibility In DataBase");
-            console.log(response.data);
         } catch (error) {
             console.error(error.message);
         }
@@ -73,18 +117,19 @@ const ProductList = ({ products, fetchAllProduct, searchProducts }) => {
                             {searchProducts.length > 0 ? (
                                 searchProducts.map((product) => (
                                     <TableRow key={product?._id}>
-                                        {console.log(product?._id)}
                                         <TableCell scope="row">
                                             {product.productName}
                                         </TableCell>
-                                        <TableCell align="right">{product.productCategory}</TableCell>
+                                        <TableCell align="right" sx={{ fontWeight: 800 }}>
+                                            {product.category}
+                                        </TableCell>
                                         <TableCell align="right">{product.price}</TableCell>
                                         <TableCell align="right">{product.salePrice}</TableCell>
                                         <TableCell align="right">{product.productQuantity}</TableCell>
                                         <TableCell align="right">{product.status}</TableCell>
                                         <TableCell align="right">
                                             <Link underline='none' component={RouterLink}
-                                               to={`/singleProduct/${product?._id}`}
+                                                to={`/singleProduct/${product?._id}`}
                                             >
                                                 <ZoomInIcon sx={{ fontSize: 30, color: '#9e9e9e' }} />
                                             </Link>
@@ -122,7 +167,9 @@ const ProductList = ({ products, fetchAllProduct, searchProducts }) => {
                                         <TableCell scope="row">
                                             {product.productName}
                                         </TableCell>
-                                        <TableCell align="right">{product.productCategory}</TableCell>
+                                        <TableCell align="right" sx={{ fontWeight: 800 }}>
+                                            {product.category}
+                                        </TableCell>
                                         <TableCell align="right">{product.price}</TableCell>
                                         <TableCell align="right">{product.salePrice}</TableCell>
                                         <TableCell align="right">{product.productQuantity}</TableCell>

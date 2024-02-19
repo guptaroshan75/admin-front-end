@@ -15,10 +15,6 @@ const category = [
   { label: 'The Shawshank Redemption' },
   { label: 'The Godfather' },
   { label: 'The Godfather: Part II' },
-  { label: 'The Dark Knight' },
-  { label: '12 Angry Men' },
-  { label: "Schindler's List" },
-  { label: 'Pulp Fiction' }
 ]
 
 const price = [
@@ -26,12 +22,6 @@ const price = [
   { label: 'High to Low' },
   { label: 'Published' },
   { label: 'Unpublished' },
-  { label: 'Status - Selling' },
-  { label: "Status - Out of Stock" },
-  { label: 'Date Added (Asc)' },
-  { label: 'Date Added (Desc)' },
-  { label: 'Date Updated (Asc)' },
-  { label: 'Date Updated (Desc)' }
 ]
 
 const Products = () => {
@@ -39,15 +29,17 @@ const Products = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [currentSearchPage, setCurrentSearchPage] = useState(1);
   const [originalProducts, setOriginalProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
 
   const [addProduct, setAddProduct] = useState({
-    myImage: "",
+    myImage: null,
     productName: '',
     description: '',
     productSKU: '',
     productBarcode: '',
-    productCategory: '',
-    productDefCategory: '',
+    category: '',
+    attributes: '',
+    attributesValue: [],
     price: '',
     salePrice: '',
     productQuantity: '',
@@ -55,33 +47,27 @@ const Products = () => {
     productTags: '',
   });
 
-  function convertToBase64(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file)
-      reader.onload = () => {
-        resolve(reader.result)
-      }
-      reader.onerror = () => {
-        reject(error)
-      }
-    })
-  }
-
-  const handleFileUpload = async (e) => {
-    const file = e.target.files[0]
-    const base64 = await convertToBase64(file)
-    setAddProduct({
-      ...addProduct,
-      myImage: base64,
-    })
-  }
-
   const handleChangeInput = (e) => {
     setAddProduct({
       ...addProduct,
-      [e.target.name]: e.target.value,
+      [e.target.name]: e.target.value
     });
+  }
+
+  const handleFileUpload = (e) => {
+    setAddProduct({
+      ...addProduct,
+      myImage: e.target.files[0]
+    });
+  };
+
+  const fetchAllCategory = async () => {
+    try {
+      const response = await axios.get(`${API}/getAllCategories`);
+      setCategories(response.data.data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const [products, setProducts] = useState([]);
@@ -89,8 +75,12 @@ const Products = () => {
   const fetchAllProduct = async () => {
     try {
       const response = await axios.get(`${API}/getAllProducts`);
-      setProducts(response.data.data);
-      setProducts(response.data.data);
+      const sortedProducts = response.data.data.sort((a, b) => {
+        const dateA = new Date(a.createdAt);
+        const dateB = new Date(b.createdAt);
+        return dateB - dateA;
+      });
+      setProducts(sortedProducts);
       setOriginalProducts(response.data.data);
       setCurrentPage(1);
     } catch (error) {
@@ -123,18 +113,15 @@ const Products = () => {
 
   useEffect(() => {
     fetchAllProduct();
-    searchAllProduct()
+    fetchAllCategory();
+    searchAllProduct();
   }, []);
 
   return (
     <Box sx={{ flexGrow: 1, px: 3, mt: 10, ml: 30, mb: 20 }} >
       <Navbar />
       <Typography variant="h5" sx={{ my: 2, fontWeight: 800 }}> Products </Typography>
-      <Paper sx={{
-        display: 'flex', justifyContent: 'space-between',
-        flexWrap: 'wrap', px: 2, py: 1
-      }}
-      >
+      <Paper sx={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', px: 2, py: 1 }} >
         <Box my={2}>
           <Button variant="outlined" startIcon={<FileUploadIcon />}
             sx={{ mr: 2, p: '10px', my: '5px' }}> Export
@@ -161,7 +148,7 @@ const Products = () => {
           </Button>
           <Button>
             <AddProduct handleChangeInput={handleChangeInput} addProduct={addProduct}
-              handleFileUpload={handleFileUpload}
+              handleFileUpload={handleFileUpload} categories={categories}
               setAddProduct={setAddProduct} fetchAllProduct={fetchAllProduct}
             />
           </Button>
@@ -191,6 +178,7 @@ const Products = () => {
       <Box my={2}>
         <ProductList products={products} key={products?.id}
           searchProducts={searchProducts} fetchAllProduct={fetchAllProduct}
+          setProducts={setProducts} categories={categories}
         />
       </Box>
     </Box>

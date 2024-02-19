@@ -1,11 +1,17 @@
 import React from 'react';
-import { List, Divider, ListItem, ListItemButton, ListItemIcon, ListItemText, Button, Link } from '@mui/material';
+import {
+    Button, Menu, MenuItem, ListItemText, Link,
+    List, Divider, ListItem, ListItemButton, ListItemIcon
+} from '@mui/material';
 import GridViewIcon from '@mui/icons-material/GridView';
 import WorkIcon from '@mui/icons-material/Work';
-import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import MouseIcon from '@mui/icons-material/Mouse';
+import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import ExploreIcon from '@mui/icons-material/Explore';
 import LogoutIcon from '@mui/icons-material/Logout';
+import CategoryIcon from '@mui/icons-material/Category';
+import BookOnlineIcon from '@mui/icons-material/BookOnline';
+import HorizontalRuleIcon from '@mui/icons-material/HorizontalRule';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
@@ -68,7 +74,7 @@ const DrawerComp = ({ open, Drawer, DrawerHeader }) => {
                         </ListItemButton>
                     </ListItem>
                 </Link>
-                <Link component={RouterLink} to="/customers" sx={{ textDecoration: 'none' }}>
+                <Link component={RouterLink} to="/category" sx={{ textDecoration: 'none' }}>
                     <ListItem disablePadding sx={{ ml: open ? 3 : 'auto', }}>
                         <ListItemButton sx={{ px: 2.5 }}>
                             <ListItemIcon
@@ -77,10 +83,78 @@ const DrawerComp = ({ open, Drawer, DrawerHeader }) => {
                                     mr: open ? 3 : 'auto',
                                     justifyContent: 'center',
                                 }}
-                            >  <PeopleAltIcon />
+                            >  <CategoryIcon />
                             </ListItemIcon>
                             <ListItemText sx={{ opacity: open ? 1 : 0, color: 'black' }}>
-                                Customer
+                                Categories
+                            </ListItemText>
+                        </ListItemButton>
+                    </ListItem>
+                </Link>
+                <Link component={RouterLink} to="/attributes" sx={{ textDecoration: 'none' }}>
+                    <ListItem disablePadding sx={{ ml: open ? 3 : 'auto', }}>
+                        <ListItemButton sx={{ px: 2.5 }}>
+                            <ListItemIcon
+                                sx={{
+                                    minWidth: 0,
+                                    mr: open ? 3 : 'auto',
+                                    justifyContent: 'center',
+                                }}
+                            >  <HorizontalRuleIcon />
+                            </ListItemIcon>
+                            <ListItemText sx={{ opacity: open ? 1 : 0, color: 'black' }}>
+                                Attributes
+                            </ListItemText>
+                        </ListItemButton>
+                    </ListItem>
+                </Link>
+                <Link component={RouterLink} to="/Shipping" sx={{ textDecoration: 'none' }}>
+                    <ListItem disablePadding sx={{ ml: open ? 3 : 'auto', }}>
+                        <ListItemButton sx={{ px: 2.5 }}>
+                            <ListItemIcon
+                                sx={{
+                                    minWidth: 0,
+                                    mr: open ? 3 : 'auto',
+                                    justifyContent: 'center',
+                                }}
+                            >  <ShoppingBagIcon />
+                            </ListItemIcon>
+                            <ListItemText sx={{ opacity: open ? 1 : 0, color: 'black' }}>
+                                Shipping
+                            </ListItemText>
+                        </ListItemButton>
+                    </ListItem>
+                </Link>
+                <Link component={RouterLink} to="/blog" sx={{ textDecoration: 'none' }}>
+                    <ListItem disablePadding sx={{ ml: open ? 3 : 'auto', }}>
+                        <ListItemButton sx={{ px: 2.5 }}>
+                            <ListItemIcon
+                                sx={{
+                                    minWidth: 0,
+                                    mr: open ? 3 : 'auto',
+                                    justifyContent: 'center',
+                                }}
+                            >  <BookOnlineIcon />
+                            </ListItemIcon>
+                            <ListItemText sx={{ opacity: open ? 1 : 0, color: 'black' }}>
+                                Blog
+                            </ListItemText>
+                        </ListItemButton>
+                    </ListItem>
+                </Link>
+                <Link component={RouterLink} to="/gallery" sx={{ textDecoration: 'none' }}>
+                    <ListItem disablePadding sx={{ ml: open ? 3 : 'auto', }}>
+                        <ListItemButton sx={{ px: 2.5 }}>
+                            <ListItemIcon
+                                sx={{
+                                    minWidth: 0,
+                                    mr: open ? 3 : 'auto',
+                                    justifyContent: 'center',
+                                }}
+                            >  <BookOnlineIcon />
+                            </ListItemIcon>
+                            <ListItemText sx={{ opacity: open ? 1 : 0, color: 'black' }}>
+                                Gallery
                             </ListItemText>
                         </ListItemButton>
                     </ListItem>
